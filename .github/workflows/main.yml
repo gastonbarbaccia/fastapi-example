@@ -21,3 +21,21 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: .
+
+  trivy:
+    name: Scan trivy
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t gastonbarbaccia/fastapi-example .
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'gastonbarbaccia/fastapi-example'
+          format: 'json'
+          output: 'trivy-results.json'
